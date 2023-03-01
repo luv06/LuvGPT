@@ -2,21 +2,37 @@ name: Deploy
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    env:
-      TELEGRAM_TOKEN: 6202443309:AAFNCM4w44Bev7kMSAvlcSarhSUqK5a1WpQ
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-      - name: Build Docker image
-        run: docker-compose --env-file config/config.env up --build -d
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Set webhook URL
-        run: |
-         curl -F "url=https://github.com/luv06/LuvGPT" https://api.telegram.org/bo6202443309:AAFNCM4w44Bev7kMSAvlcSarhSUqK5a1WpQ/setWebhook
+    - name: Build the Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/LuvGPT:latest
+        dockerfile: Dockerfile
+
+    - name: Set webhook URL
+      run: |
+        curl -X POST https://api.telegram.org/bot6202443309:AAFNCM4w44Bev7kMSAvlcSarhSUqK5a1WpQ/setWebhook \
+        -H "Content-Type: application/json" \
+        -d '{"url": "https://luv06.github.io/LuvGPT/"}'
+
+    - name: Run the Docker container
+      uses: docker/compose-action@v2
+      with:
+        compose-file: docker-compose.yml
+        env-file: .env.prod

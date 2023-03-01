@@ -4,10 +4,10 @@ from telegram import Update, MessageEntity
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
 # Set your OpenAI API key
-openai.api_key = 'your_api_key_here'
+openai.api_key = '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'
 
 # Set the Telegram bot token
-telegram_bot_token = 'your_bot_token_here'
+telegram_bot_token = '6202443309:AAHlgScZALxuR5lk9PCNl5QysaUw0VRYsbo'
 
 # Set the different modes for your bot
 modes = {

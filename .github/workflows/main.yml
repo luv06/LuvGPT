@@ -1,23 +1,41 @@
-name: Deploy
-
+name: Telegram Bot
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    env:
-      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Build Docker image
-        run: docker-compose --env-file config/config.env up --build -d
+      - name: Set up Python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
 
-      - name: Set webhook URL
+      - name: Install dependencies
         run: |
-          curl --location --request POST "https://api.telegram.org/bot6202443309:AAHlgScZALxuR5lk9PCNl5QysaUw0VRYsbo/setWebhook" \
-          --form "url=https://luv06.github.io/LuvGPT"
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Set up environment variables
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          CHAT_GPT_API_KEY: ${{ secrets.CHAT_GPT_API_KEY }}
+          WEBHOOK_URL: https://luv06.github.io/LuvGPT
+          PORT: 8080
+        run: |
+          sed -i "s/TELEGRAM_TOKEN/${TELEGRAM_TOKEN}/g" config/config.yml
+          sed -i "s/CHAT_GPT_API_KEY/${CHAT_GPT_API_KEY}/g" config/config.yml
+          sed -i "s/WEBHOOK_URL/${WEBHOOK_URL}/g" config/config.yml
+          sed -i "s/PORT/${PORT}/g" config/config.yml
+
+      - name: Start server
+        run: docker-compose --env-file config/config.env up --build

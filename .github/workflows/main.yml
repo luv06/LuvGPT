@@ -19,5 +19,5 @@ jobs:
 
       - name: Set webhook URL
         run: |
-          curl --location --request POST "https://api.telegram.org/6202443309:AAFNCM4w44Bev7kMSAvlcSarhSUqK5a1WpQ/setWebhook" \
+          curl --location --request POST "https://api.telegram.org/6202443309:AAHlgScZALxuR5lk9PCNl5QysaUw0VRYsbo/setWebhook" \
           --form "url=https://luv06.github.io/LuvGPT"

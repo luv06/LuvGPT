@@ -1,38 +1,20 @@
-version: "3"
+FROM python:3.8-slim
 
-services:
-  mongo:
-    container_name: mongo
-    image: mongo:latest
-    restart: always
-    ports:
-      - ${MONGODB_PORT:-27017}:${MONGODB_PORT:-27017}
-    volumes:
-      - ${MONGODB_PATH:-./mongodb}:/data/db
-    # TODO: add auth
+ENV PYTHONFAULTHANDLER=1
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONHASHSEED=random
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PIP_NO_CACHE_DIR=off
+ENV PIP_DISABLE_PIP_VERSION_CHECK=on
+ENV PIP_DEFAULT_TIMEOUT=100
 
-  chatgpt_telegram_bot:
-    container_name: chatgpt_telegram_bot
-    command: python3 bot/bot.py
-    restart: always
-    build:
-      context: "."
-      dockerfile: Dockerfile
-    depends_on:
-      - mongo
+RUN apt-get update
+RUN apt-get install -y python3 python3-pip python-dev build-essential python3-venv
 
-  mongo_express:
-    container_name: mongo-express
-    image: mongo-express:latest
-    restart: always
-    ports:
-      - ${MONGO_EXPRESS_PORT:-8081}:${MONGO_EXPRESS_PORT:-8081}
-    environment:
-      - ME_CONFIG_MONGODB_SERVER=mongo
-      - ME_CONFIG_MONGODB_PORT=${MONGODB_PORT:-27017}
-      - ME_CONFIG_MONGODB_ENABLE_ADMIN=false
-      - ME_CONFIG_MONGODB_AUTH_DATABASE=chatgpt_telegram_bot
-      - ME_CONFIG_BASICAUTH_USERNAME=${MONGO_EXPRESS_USERNAME:-username}
-      - ME_CONFIG_BASICAUTH_PASSWORD=${MONGO_EXPRESS_PASSWORD:-password}
-    depends_on:
-      - mongo
+RUN mkdir -p /code
+ADD . /code
+WORKDIR /code
+
+RUN pip3 install -r requirements.txt
+
+CMD ["bash"]

@@ -1,4 +1,13 @@
-telegram_token: "6202443309:AAHlgScZALxuR5lk9PCNl5QysaUw0VRYsbo"
-openai_api_key: "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"
-allowed_telegram_usernames: []  # if empty, the bot is available to anyone
-new_dialog_timeout: 600  # new dialog starts after timeout (in seconds)
+telegram:
+  token: 6202443309:AAHlgScZALxuR5lk9PCNl5QysaUw0VRYsbo
+  webhook:
+    url: https://luv06.github.io/LuvGPT
+    port: 5000
+  admins:
+    - ren_luv
+chat_gpt:
+  api_key: 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
+  model: GPT-3
+  temperature: 0.8
+  max_length: 100
+  mode: roleplay

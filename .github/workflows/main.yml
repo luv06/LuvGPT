@@ -9,7 +9,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
-      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      TELEGRAM_TOKEN: 6202443309:AAFNCM4w44Bev7kMSAvlcSarhSUqK5a1WpQ
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
